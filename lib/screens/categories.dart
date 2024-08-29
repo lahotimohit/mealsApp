@@ -3,17 +3,23 @@ import 'package:mealsapp/data/dummy_data.dart';
 import 'package:mealsapp/models/category.dart';
 import 'package:mealsapp/screens/meals.dart';
 import 'package:mealsapp/widgets/category_grid_item.dart';
+import 'package:mealsapp/models/meal.dart';
 
 class CategoriesScreen extends StatelessWidget {
-  const CategoriesScreen({super.key});
+  const CategoriesScreen({super.key, required this.onToggleFavourite});
+
+  final void Function(Meal meal) onToggleFavourite;
 
   void _selectedCategory(BuildContext context, Category category) {
     final filteredMeals = dummyMeals
         .where((meal) => meal.categories.contains(category.id))
         .toList();
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (ctx) =>
-            MealsScreen(title: category.title, meal: filteredMeals)));
+        builder: (ctx) => MealsScreen(
+              title: category.title,
+              meal: filteredMeals,
+              onToggleFavourite: onToggleFavourite,
+            )));
   }
 
   @override
