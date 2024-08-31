@@ -44,6 +44,13 @@ class _TabsScreen extends State<TabsScreen> {
     });
   }
 
+  void _setScreen(String identifier) {
+    if (identifier == "Filters") {
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var selectPageTitle = "Categories";
@@ -63,7 +70,9 @@ class _TabsScreen extends State<TabsScreen> {
       appBar: AppBar(
         title: Text(selectPageTitle),
       ),
-      drawer: const MainDrawer(),
+      drawer: MainDrawer(
+        onSelectScreen: _setScreen,
+      ),
       body: currentPage,
       bottomNavigationBar: BottomNavigationBar(
         onTap: setPage,
