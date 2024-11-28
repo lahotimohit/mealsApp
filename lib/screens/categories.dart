@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:mealsapp/data/dummy_data.dart';
 import 'package:mealsapp/models/category.dart';
 import 'package:mealsapp/screens/meals.dart';
 import 'package:mealsapp/widgets/category_grid_item.dart';
 import 'package:mealsapp/models/meal.dart';
 
-class CategoriesScreen extends StatelessWidget {
+class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen(
       {super.key,
       required this.onToggleFavourite,
@@ -14,21 +14,47 @@ class CategoriesScreen extends StatelessWidget {
   final void Function(Meal meal) onToggleFavourite;
   final List<Meal> availableMeals;
 
+  @override
+  State<CategoriesScreen> createState() => _CategoriesScreenState();
+}
+
+class _CategoriesScreenState extends State<CategoriesScreen> with SingleTickerProviderStateMixin {
+    late AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(vsync: this, 
+    duration: const  Duration(milliseconds: 300),
+    lowerBound: 0,
+    upperBound: 1);
+
+    _animationController.forward();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _selectedCategory(BuildContext context, Category category) {
-    final filteredMeals = availableMeals
+    final filteredMeals = widget.availableMeals
         .where((meal) => meal.categories.contains(category.id))
         .toList();
     Navigator.of(context).push(MaterialPageRoute(
         builder: (ctx) => MealsScreen(
               title: category.title,
               meal: filteredMeals,
-              onToggleFavourite: onToggleFavourite,
+              onToggleFavourite: widget.onToggleFavourite,
             )));
   }
 
   @override
   Widget build(BuildContext context) {
-    return GridView(
+    return AnimatedBuilder(
+    animation: _animationController,
+    child: GridView(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 3 / 2,
@@ -43,6 +69,10 @@ class CategoriesScreen extends StatelessWidget {
             },
           )
       ],
-    );
+    ), 
+    builder: (context, child) => Padding(
+      padding: EdgeInsets.only(top: 100 - _animationController.value * 100),
+      child: child,
+      )) ;
   }
 }
